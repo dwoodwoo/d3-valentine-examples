@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  .axis path,
+  .axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+  }
+
+  .axis text {
+      font-family: sans-serif;
+      font-size: 11px;
+  }
+</style>
+<body>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+
+
+
+
+
+
+var margin = {top: 20, right: 20, bottom: 30, left: 30},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+    
+ var xAxisScale = d3.scale.linear()
+    .domain([0, 100])
+    .range([0, width]);
+
+ var yAxisScale = d3.scale.linear()
+    .domain([0, 1])
+    .range([height, 0]);
+
+
+var xAxis = d3.svg.axis()
+  .tickFormat(function(d) { return parseInt(d, 10) + "%"; })
+    .scale(xAxisScale);
+
+var yAxis = d3.svg.axis()
+  .orient("left")
+    .scale(yAxisScale);
+    
+    
+var svg = d3.select("body")
+    .append("svg")
+          .attr("width", width + margin.left + margin.right)
+         .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var xAxisGroup = svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+var yAxisGroup = svg.append("g")
+    .attr("class", "axis")
+    .call(yAxis);
+
+
+
+setInterval (function() {
+
+var myData = [];
+(function() {
+  var length = ~~(Math.random()*30);
+  for (var i=0; i < length; i++) {
+    var x = ~~(Math.random()*100);
+    var y = Math.random();
+    var r = ~~(Math.random()*30);
+    myData.push({"x": x, "y": y, "r": r});
+  }
+  return myData;
+})();
+
+var circles = svg.selectAll("circle").data(myData);
+
+circles
+  .transition()
+  .duration(1500)
+  .attr("cx", function(d) {return xAxisScale(d.x)})
+  .attr("cy", function(d) {return yAxisScale(d.y)})
+  .attr("r", function(d) {return d.r});
+
+
+circles.enter()
+  .append("circle")
+  .attr("cx", function(d) {return xAxisScale(d.x)})
+  .attr("cy", function(d) {return yAxisScale(d.y)})
+  .attr("r", 0)
+  .style("fill", "steelblue")
+  .transition()
+  .duration(1500)
+  .attr("r", function(d) {return d.r});
+
+circles
+  .exit()
+  .transition()
+  .duration(1500)
+  .attr("r", 0);
+
+}, 2000);
+
+</script>

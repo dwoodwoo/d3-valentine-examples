@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  .axis path,
+  .axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+  }
+
+  .axis text {
+      font-family: sans-serif;
+      font-size: 11px;
+  }
+</style>
+<body>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+
+var myData = [{x: 30, y: .7, r: 25, uniq: 0},
+              {x: 50, y: .2, r: 20, uniq: 1},
+              {x: 85, y: .5, r: 30, uniq: 2},
+];
+
+var myData2 = [{x: 10, y: .1, r: 30, uniq: 2}];
+
+var myData3 = [{x: 30, y: .7, r: 25, uniq: 2},
+              {x: 85, y: .5, r: 30, uniq: 0},
+              {x: 50, y: .2, r: 20, uniq: 3},
+              {x: 65, y: .3, r: 15, uniq: 1}
+];
+
+var fill = d3.scale.category10();
+
+var margin = {top: 20, right: 20, bottom: 30, left: 30},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+    
+ var xAxisScale = d3.scale.linear()
+    .domain([0, 100])
+    .range([0, width]);
+
+ var yAxisScale = d3.scale.linear()
+    .domain([0, 1])
+    .range([height, 0]);
+
+
+var xAxis = d3.svg.axis()
+  .tickFormat(function(d) { return parseInt(d, 10) + "%"; })
+    .scale(xAxisScale);
+
+var yAxis = d3.svg.axis()
+  .orient("left")
+    .scale(yAxisScale);
+    
+    
+var svg = d3.select("body")
+    .append("svg")
+          .attr("width", width + margin.left + margin.right)
+         .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var xAxisGroup = svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+var yAxisGroup = svg.append("g")
+    .attr("class", "axis")
+    .call(yAxis);
+
+var circles = svg.selectAll("circle").data(myData, function(d) { return d.uniq});
+  
+circles.enter()
+  .append("circle")
+  .attr("cx", function(d) {return xAxisScale(d.x)})
+  .attr("cy", height)
+  .attr("r", function(d) {return d.r})
+  .style("fill", function(d) {return fill(d.uniq)});
+
+
+circles
+  .transition()
+  .duration(1500)
+  .attr("cy", function(d) {return yAxisScale(d.y)})
+  .each("end", nextFunc);
+
+
+
+function nextFunc() {
+
+circles = svg.selectAll("circle").data(myData3, function(d) { return d.uniq});
+
+circles
+  .transition()
+  .duration(1500)
+  .attr("cx", function(d) {return xAxisScale(d.x)})
+  .attr("cy", function(d) {return yAxisScale(d.y)})
+  .attr("r", function(d) {return d.r});
+
+
+circles.enter()
+  .append("circle")
+  .attr("cx", function(d) {return xAxisScale(d.x)})
+  .attr("cy", function(d) {return yAxisScale(d.y)})
+  .attr("r", 0)
+  .style("fill", function(d) {return fill(d.uniq)})
+  .transition()
+  .duration(1500)
+  .attr("r", function(d) {return d.r});
+
+circles
+  .exit()
+  .transition()
+  .duration(1500)
+  .attr("r", 0);
+}
+
+
+
+
+
+</script>
