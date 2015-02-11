@@ -14,6 +14,7 @@
   }
 </style>
 <body>
+  <div id="myDiv"></div>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
@@ -52,14 +53,14 @@ var margin = {top: 20, right: 20, bottom: 30, left: 30},
 
 var xAxis = d3.svg.axis()
   .tickFormat(function(d) { return parseInt(d, 10) + "%"; })
-    .scale(xAxisScale);
+  .scale(xAxisScale);
 
 var yAxis = d3.svg.axis()
   .orient("left")
     .scale(yAxisScale);
     
     
-var svg = d3.select("body")
+var svg = d3.select("#myDiv")
     .append("svg")
           .attr("width", width + margin.left + margin.right)
          .attr("height", height + margin.top + margin.bottom)
@@ -75,15 +76,29 @@ var yAxisGroup = svg.append("g")
     .attr("class", "axis")
     .call(yAxis);
 
+
 var circles = svg
-      .selectAll("foo")
+      .selectAll("circle")
       .data(myData)
       .enter()
       .append("circle")
-      .attr("cx", function(d) {return xAxisScale(d.x)})
-      .attr("cy", function(d) {return yAxisScale(d.y)})
-      .attr("r", function(d) {return d.r})
+      .attr("cx", function(d, i) {console.log("d = " , d, "i = " + i); return xAxisScale(d.x)})
+      .attr("cy", function(d, i) {return yAxisScale(d.y)})
+      .attr("r", function(d, i) { return d.r})
       .style("fill", "steelblue");
+
+
+// var circles = svg
+//       .selectAll("circle")
+//       .data(myData)
+//       .enter()
+//       .append("circle")
+//       .attr("cx", function(d) {return xAxisScale(d.x)})
+//       .attr("cy", function(d) {return yAxisScale(d.y)})
+//       .attr("r", function(d) {return d.r})
+//       .style("fill", "steelblue");
+
+
 
 
 

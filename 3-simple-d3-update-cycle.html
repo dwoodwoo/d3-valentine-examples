@@ -19,11 +19,6 @@
 <script>
 
 
-
-
-
-
-
 var margin = {top: 20, right: 20, bottom: 30, left: 30},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -63,10 +58,12 @@ var yAxisGroup = svg.append("g")
     .call(yAxis);
 
 
+var circles, myData;
 
-setInterval (function() {
 
-var myData = [];
+var foo = setInterval (function() {
+
+myData = [];
 (function() {
   var length = ~~(Math.random()*30);
   for (var i=0; i < length; i++) {
@@ -78,31 +75,38 @@ var myData = [];
   return myData;
 })();
 
-var circles = svg.selectAll("circle").data(myData);
+circles = svg.selectAll("circle").data(myData);
 
+
+// updating
 circles
   .transition()
   .duration(1500)
   .attr("cx", function(d) {return xAxisScale(d.x)})
   .attr("cy", function(d) {return yAxisScale(d.y)})
-  .attr("r", function(d) {return d.r});
+  .attr("r", function(d) {return d.r})
+  .style("fill", "yellow");
 
 
+// handling new data points
 circles.enter()
   .append("circle")
-  .attr("cx", function(d) {return xAxisScale(d.x)})
-  .attr("cy", function(d) {return yAxisScale(d.y)})
-  .attr("r", 0)
-  .style("fill", "steelblue")
+    .attr("cx", function(d) {return xAxisScale(d.x)})
+    .attr("cy", function(d) {return yAxisScale(d.y)})
+    .attr("r", 0)
+    .style("fill", "green")
   .transition()
   .duration(1500)
-  .attr("r", function(d) {return d.r});
+    .attr("r", function(d) {return d.r});
 
+// handling exiting datapoi
 circles
   .exit()
+  .style("fill", "red")
   .transition()
   .duration(1500)
-  .attr("r", 0);
+  .attr("r", 0)
+  .remove();
 
 }, 2000);
 
