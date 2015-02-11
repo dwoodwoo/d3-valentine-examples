@@ -58,10 +58,12 @@ var yAxisGroup = svg.append("g")
     .call(yAxis);
 
 
-var circles, myData;
-
+var circles, myData = [], prevDataLength = 0;
 
 var foo = setInterval (function() {
+
+
+prevDataLength = myData.length;
 
 myData = [];
 (function() {
@@ -75,39 +77,70 @@ myData = [];
   return myData;
 })();
 
+if (myData.length > prevDataLength) {
+  console.log("new array is larger")
+};
+if (myData.length < prevDataLength) {
+  console.log("new array is smaller")
+};
+if (myData.length === prevDataLength) {
+  console.log("new array is same size")
+};
+
+
 circles = svg.selectAll("circle").data(myData);
 
 
 // updating
-circles
-  .transition()
-  .duration(1500)
-  .attr("cx", function(d) {return xAxisScale(d.x)})
-  .attr("cy", function(d) {return yAxisScale(d.y)})
-  .attr("r", function(d) {return d.r})
-  .style("fill", "yellow");
+// if the new myData.length is same, all turn yellow
+//
+// if the new myData.length is lower, circles staying
+// turn yellow; circles leaving are selected by circles.exit()
+// below and will turn red.
+//
+// if the new myData.length is greater, all turn yellow.
+// Additional circles will appear in green, are selected by
+// circles.enter() below
 
 
 // handling new data points
+
+
+circles
+  .style("fill", "yellow")
+  .transition()
+  .duration(2000)
+  .attr("cx", function(d) {return xAxisScale(d.x)})
+  .attr("cy", function(d) {return yAxisScale(d.y)})
+  .attr("r", function(d) {return d.r});
+
+
+  
+
+
 circles.enter()
   .append("circle")
     .attr("cx", function(d) {return xAxisScale(d.x)})
     .attr("cy", function(d) {return yAxisScale(d.y)})
-    .attr("r", 0)
+    .attr("r", 5)
     .style("fill", "green")
   .transition()
-  .duration(1500)
+  .duration(2000)
     .attr("r", function(d) {return d.r});
 
-// handling exiting datapoi
+
+
+// handling exiting data
 circles
   .exit()
   .style("fill", "red")
   .transition()
-  .duration(1500)
+  .duration(2000)
   .attr("r", 0)
   .remove();
 
-}, 2000);
+
+
+}, 3000);
 
 </script>
